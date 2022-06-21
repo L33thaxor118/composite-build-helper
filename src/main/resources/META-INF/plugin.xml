@@ -1,0 +1,23 @@
+<idea-plugin>
+    <id>org.az.composite-build-helper</id>
+    <name>Composite Build Helper</name>
+    <vendor email="alvarado_118@yahoo.com" url="">Azriel</vendor>
+
+    <description><![CDATA[
+    Enter short description for your plugin here.<br>
+    <em>most HTML tags may be used</em>
+    ]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <toolWindow factoryClass="ComposerToolWindowFactory" id="Build Composition"/>
+        <notificationGroup id="Custom Notification Group" displayType="BALLOON"/>
+    </extensions>
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+</idea-plugin>
