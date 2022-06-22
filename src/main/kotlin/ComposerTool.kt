@@ -1,7 +1,9 @@
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.ui.BooleanTableCellRenderer
 import com.intellij.ui.table.JBTable
+import org.jdesktop.swingx.JXTable
 import java.awt.FlowLayout
 import java.io.File
 import javax.swing.*
@@ -14,11 +16,17 @@ class ComposerTool(project: Project) {
 
     private val projects = JBTable().apply {
         model = tableModel
+        setDefaultEditor(Boolean::class.java, JXTable.BooleanEditor())
+        setDefaultRenderer(Boolean::class.java, BooleanTableCellRenderer())
+        tableModel.addIncludeListener { projName, projPath, include ->
+
+        }
     }
 
     private val rootDirPicker = JPanel(FlowLayout(FlowLayout.LEFT)).apply {
         add(JLabel("Root Dir"))
         val textFieldWithBrowseButton = TextFieldWithBrowseButton{}.apply {
+            text = "/Users/azrielalvarado/AndroidStudioProjects"
             addBrowseFolderListener(
                 "What...",
                 "What?",
@@ -50,7 +58,7 @@ class ComposerTool(project: Project) {
     private fun initViews() {
         container.layout = BoxLayout(container, BoxLayout.Y_AXIS)
         container.add(rootDirPicker)
-        container.add(projects)
+        container.add(JScrollPane(projects))
     }
 
     private fun findProjects(path: String): List<File> =

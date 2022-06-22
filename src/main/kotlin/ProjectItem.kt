@@ -5,7 +5,7 @@ import java.util.regex.Pattern
 
 class ProjectItem(val name: String, val path: String) {
 
-    val includeBuild: Boolean = false
+    var includeBuild: Boolean = false
     val checkedOutVersion: String = "?"
 
     companion object {
