@@ -8,9 +8,11 @@ import java.awt.FlowLayout
 import java.io.File
 import javax.swing.*
 
+
 class ComposerTool(project: Project) {
     private val container = JPanel()
     fun getView(): JPanel = container
+    private val projectDependencyManager = ProjectDependencyManager(project)
 
     private val tableModel = ProjectTableModel()
 
@@ -18,8 +20,8 @@ class ComposerTool(project: Project) {
         model = tableModel
         setDefaultEditor(Boolean::class.java, JXTable.BooleanEditor())
         setDefaultRenderer(Boolean::class.java, BooleanTableCellRenderer())
-        tableModel.addIncludeListener { projName, projPath, include ->
-
+        tableModel.addIncludeListener { dependency, include ->
+            projectDependencyManager.updateProjectBuildInclusion(dependency, include)
         }
     }
 
@@ -45,7 +47,7 @@ class ComposerTool(project: Project) {
         add(JButton("Search").apply {
             addActionListener {
                 val dirs = findProjects(textFieldWithBrowseButton.text)
-                val projects = dirs.mapNotNull { ProjectDependency.from(it) }
+                val projects = dirs.mapNotNull { ProjectDependency(it) }
                 tableModel.update(projects)
             }
         })

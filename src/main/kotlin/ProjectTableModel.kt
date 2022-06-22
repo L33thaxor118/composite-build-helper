@@ -2,7 +2,7 @@ import javax.swing.table.AbstractTableModel
 
 class ProjectTableModel: AbstractTableModel() {
     var projects = listOf<ProjectDependency>()
-    private val columnNames = arrayOf("Project", "Include")
+    private val columnNames = arrayOf("project", "substitute", "using", "version", "clean", "include")
 
     fun update(newProjects: List<ProjectDependency>) {
         projects = newProjects
@@ -17,13 +17,19 @@ class ProjectTableModel: AbstractTableModel() {
     }
 
     override fun isCellEditable(row: Int, col: Int): Boolean {
-        return col == 1
+        return col == 1 || col == 2 || col == 3 || col == 5
     }
 
-    override fun getColumnClass(column: Int): Class<*>? {
-        return if (column == 1) {
-            Boolean::class.java
-        } else String::class.java
+    override fun getColumnClass(column: Int): Class<*> {
+        return when(column) {
+            0 -> String::class.java
+            1 -> String::class.java
+            2 -> String::class.java
+            3 -> String::class.java
+            4 -> String::class.java
+            5 -> Boolean::class.java
+            else -> Object::class.java
+        }
     }
 
     override fun getColumnName(col: Int): String? {
@@ -34,7 +40,11 @@ class ProjectTableModel: AbstractTableModel() {
         val project = projects[rowIndex]
         return when (columnIndex) {
             0 -> project.name
-            1 -> project.includeBuild
+            1 -> project.substitute
+            2 -> project.using
+            3 -> project.checkedOutVersion
+            4 -> project.isClean
+            5 -> project.includeBuild
             else -> "NaN"
         }
     }
@@ -42,9 +52,23 @@ class ProjectTableModel: AbstractTableModel() {
     override fun setValueAt(value: Any, row: Int, col: Int) {
         val project = projects[row]
         when (col) {
+            0 -> {
+
+            }
             1 -> {
+                project.substitute = value as String
+            }
+            2 -> {
+                project.using = value as String
+            }
+            3 -> {
+            }
+            4 -> {
+
+            }
+            5 -> {
                 project.includeBuild = value as Boolean
-                listener?.invoke(project.name, project.path, value as Boolean)
+                listener?.invoke(project, value)
             }
         }
         fireTableCellUpdated(row, col)
@@ -56,4 +80,4 @@ class ProjectTableModel: AbstractTableModel() {
     }
 }
 
-typealias IncludeListener = (projName: String, projPath: String, include: Boolean)->Unit
+typealias IncludeListener = (project: ProjectDependency, include: Boolean)->Unit
