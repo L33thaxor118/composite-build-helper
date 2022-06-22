@@ -1,10 +1,10 @@
 import javax.swing.table.AbstractTableModel
 
 class ProjectTableModel: AbstractTableModel() {
-    var projects = listOf<ProjectItem>()
+    var projects = listOf<ProjectDependency>()
     private val columnNames = arrayOf("Project", "Include")
 
-    fun update(newProjects: List<ProjectItem>) {
+    fun update(newProjects: List<ProjectDependency>) {
         projects = newProjects
     }
 

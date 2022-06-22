@@ -45,7 +45,7 @@ class ComposerTool(project: Project) {
         add(JButton("Search").apply {
             addActionListener {
                 val dirs = findProjects(textFieldWithBrowseButton.text)
-                val projects = dirs.mapNotNull { ProjectItem.from(it) }
+                val projects = dirs.mapNotNull { ProjectDependency.from(it) }
                 tableModel.update(projects)
             }
         })

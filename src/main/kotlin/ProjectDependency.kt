@@ -1,15 +1,14 @@
-import org.eclipse.jgit.revwalk.DepthWalk
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
-class ProjectItem(val name: String, val path: String) {
+class ProjectDependency(val name: String, val path: String) {
 
     var includeBuild: Boolean = false
     val checkedOutVersion: String = "?"
 
     companion object {
-        fun from(dir: File): ProjectItem? {
+        fun from(dir: File): ProjectDependency? {
             var name = ""
             try {
                 val scanner = Scanner(File(dir.path, "settings.gradle"))
@@ -27,7 +26,7 @@ class ProjectItem(val name: String, val path: String) {
             } catch(e: Exception) {
                 return null
             }
-            return ProjectItem(name, dir.path)
+            return ProjectDependency(name, dir.path)
         }
     }
 
