@@ -4,12 +4,16 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.ui.BooleanTableCellRenderer
 import com.intellij.ui.table.JBTable
 import org.jdesktop.swingx.JXTable
+import org.jetbrains.plugins.terminal.TerminalView
 import java.awt.FlowLayout
+import java.awt.event.MouseEvent
+import java.awt.event.MouseListener
 import java.io.File
+import java.io.IOException
 import javax.swing.*
 
 
-class ComposerTool(project: Project) {
+class ComposerTool(private val project: Project) {
     private val container = JPanel()
     fun getView(): JPanel = container
     private val projectDependencyManager = ProjectDependencyManager(project)
@@ -23,6 +27,22 @@ class ComposerTool(project: Project) {
         tableModel.addIncludeListener { dependency, include ->
             projectDependencyManager.updateProjectBuildInclusion(dependency, include)
         }
+        addMouseListener(object: MouseListener {
+            override fun mouseClicked(e: MouseEvent?) {
+                e?.point.let {
+                    val row = rowAtPoint(e?.point)
+                    val col = columnAtPoint(e?.point)
+                    if (col == 0) {
+                        val project = tableModel.projects[row]
+                        openTerminal(project.path, project.name)
+                    }
+                }
+            }
+            override fun mousePressed(e: MouseEvent?) {}
+            override fun mouseReleased(e: MouseEvent?) {}
+            override fun mouseEntered(e: MouseEvent?) {}
+            override fun mouseExited(e: MouseEvent?) {}
+        })
     }
 
     private val rootDirPicker = JPanel(FlowLayout(FlowLayout.LEFT)).apply {
@@ -65,4 +85,15 @@ class ComposerTool(project: Project) {
 
     private fun findProjects(path: String): List<File> =
         File(path).walk().filter { it.isDirectory }.filter { File(it.path, "settings.gradle").exists() }.toList()
+
+    fun openTerminal(path: String, tabName: String) {
+        //based on this: https://github.com/JetBrains/intellij-community/blob/95ab6a1ecfdf49754f7eb5a81984cdc2c4fa0ca5/plugins/sh/src/com/intellij/sh/run/ShTerminalRunner.java
+        //looks like beyond plugin extensions, we can use classes defined in other plugins as well. In this case, we use TerminalView from intelliJs Terminal plugin.
+        val terminalView = TerminalView.getInstance(project)
+        try {
+            terminalView.createLocalShellWidget(path, tabName)
+        } catch (e: IOException) {
+
+        }
+    }
 }

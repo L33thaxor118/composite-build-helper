@@ -12,6 +12,7 @@ class ProjectDependency(dir: File) {
     var checkedOutVersion: String
     var isClean: Boolean
     val isGitRepo: Boolean
+    val repoController = GitRepoController(dir.path)
 
     val inclusionStatement: String
         get() = "includeBuild(\"$path\") {dependencySubstitution {substitute module('$substitute') using project('$using')}}"
@@ -47,11 +48,11 @@ class ProjectDependency(dir: File) {
     }
 
     private fun getCurrentCheckedOutVersion(): String {
-        return "1.0.0"
+        return repoController.getAvailableTags().first()
     }
 
     private fun isRepoClean(): Boolean {
-        return true
+        return repoController.isWorkingTreeClean()
     }
 
     private fun checkIsGitRepo(): Boolean {

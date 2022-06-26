@@ -9,7 +9,6 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    mavenCentral()
 }
 
 dependencies {
@@ -22,7 +21,7 @@ dependencies {
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = '2021.2.4'
-    plugins = ['android']
+    plugins = ['android', 'terminal']
 }
 
 runIde {
