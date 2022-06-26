@@ -2,7 +2,7 @@ import javax.swing.table.AbstractTableModel
 
 class ProjectTableModel: AbstractTableModel() {
     var projects = listOf<ProjectDependency>()
-    private val columnNames = arrayOf("project", "substitute", "using", "version", "clean", "include")
+    private val columnNames = arrayOf("project", "substitute", "using", "version", "status", "include")
 
     fun update(newProjects: List<ProjectDependency>) {
         projects = newProjects
@@ -43,7 +43,7 @@ class ProjectTableModel: AbstractTableModel() {
             1 -> project.substitute
             2 -> project.using
             3 -> project.checkedOutVersion
-            4 -> project.isClean
+            4 -> if (project.isClean) "clean" else "dirty"
             5 -> project.includeBuild
             else -> "NaN"
         }
