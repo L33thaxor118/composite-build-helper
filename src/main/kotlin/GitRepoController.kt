@@ -3,34 +3,48 @@ import java.io.File
 import java.io.InputStreamReader
 
 
-class GitRepoController(repoPath: String) {
+class GitRepoController(val repoPath: String) {
+    private val isGitRepo: Boolean
 
-    fun getAvailableTags(): List<String> {
-        val pb = ProcessBuilder()
-            .command("git", "status")
-            .directory(File("/Users/azrielalvarado/AndroidStudioProjects/PluginTestApp"))
-        val pr = pb.start()
-        pr.waitFor()
-        val output = BufferedReader(InputStreamReader(pr.inputStream))
-        val value = output.readLine()
-        return listOf(value)
+    init {
+        val file = File(repoPath)
+        isGitRepo = if (file.isDirectory) {
+            File(file.path, ".git").exists()
+        } else {
+            false
+        }
     }
 
     /**
      * Gets tag for currently checked-out commit, if any
      */
     fun getCurrentTag(): String? {
-        return "1.0.5"
-    }
-
-    /**
-     * Checks out a tag if a tag with that name exists. Returns true if the operation succeeded
-     */
-    fun checkoutTag(tagName: String, force: Boolean): Boolean {
-        return true
+        if (!isGitRepo) {
+            return null
+        }
+        val pb = ProcessBuilder()
+            .command("git", "describe", "--tags")
+            .directory(File(repoPath))
+        val pr = pb.start()
+        pr.waitFor()
+        val output = BufferedReader(InputStreamReader(pr.inputStream))
+        val value = output.readLine()
+        return value?.let {
+            if (value.contains("fatal")) null else value
+        }
     }
 
     fun isWorkingTreeClean(): Boolean {
-        return true
+        if (!isGitRepo) {
+            return true
+        }
+        val pb = ProcessBuilder()
+            .command("git", "status", "--short")
+            .directory(File(repoPath))
+        val pr = pb.start()
+        pr.waitFor()
+        val output = BufferedReader(InputStreamReader(pr.inputStream))
+        output.readLine() ?: return true
+        return false
     }
 }

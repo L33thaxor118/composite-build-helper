@@ -48,7 +48,7 @@ class ProjectDependency(dir: File) {
     }
 
     private fun getCurrentCheckedOutVersion(): String {
-        return repoController.getAvailableTags().first()
+        return repoController.getCurrentTag() ?: "?"
     }
 
     private fun isRepoClean(): Boolean {
