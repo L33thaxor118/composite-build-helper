@@ -1,3 +1,4 @@
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
@@ -53,9 +54,10 @@ class ComposerTool(private val project: Project) {
     }
 
     private val rootDirPicker = JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+        val dirPath = PropertiesComponent.getInstance(project).getValue("com.az.compositehelper.moduledir", "")
         add(JLabel("Root Dir"))
         val textFieldWithBrowseButton = TextFieldWithBrowseButton{}.apply {
-            text = "/Users/azrielalvarado/AndroidStudioProjects"
+            text = dirPath
             addBrowseFolderListener(
                 "What...",
                 "What?",
@@ -76,6 +78,7 @@ class ComposerTool(private val project: Project) {
                 val dirs = findProjects(textFieldWithBrowseButton.text)
                 val projects = dirs.mapNotNull { ProjectDependency(it) }
                 tableModel.update(projects)
+                PropertiesComponent.getInstance(project).setValue("com.az.compositehelper.moduledir", textFieldWithBrowseButton.text)
             }
         })
     }
