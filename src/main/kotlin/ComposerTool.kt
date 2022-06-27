@@ -77,6 +77,7 @@ class ComposerTool(private val project: Project) {
             addActionListener {
                 val dirs = findProjects(textFieldWithBrowseButton.text)
                 val projects = dirs.mapNotNull { ProjectDependency(it) }
+                projects.forEach { proj -> proj.includeBuild = projectDependencyManager.isDependencyIncluded(proj) }
                 tableModel.update(projects)
                 PropertiesComponent.getInstance(project).setValue("com.az.compositehelper.moduledir", textFieldWithBrowseButton.text)
             }

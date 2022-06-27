@@ -18,6 +18,22 @@ class ProjectDependencyManager(private val project: Project) {
         }
     }
 
+    fun isDependencyIncluded(dependency: ProjectDependency): Boolean {
+        var dependencyFound = false
+        LocalFileSystem.getInstance().findFileByIoFile(File(project.basePath, "settings.gradle"))?.let {
+            val document = FileDocumentManager.getInstance().getDocument(it)
+            val existingContentScanner = Scanner(document?.text)
+            while(existingContentScanner.hasNextLine()) {
+                val line = existingContentScanner.nextLine()
+                if (line.equals(dependency.inclusionStatement)) {
+                    dependencyFound = true
+                }
+            }
+            existingContentScanner.close()
+        }
+        return dependencyFound
+    }
+
     private fun updateDependencies(dependency: ProjectDependency, action: DependencyAction) {
         LocalFileSystem.getInstance().findFileByIoFile(File(project.basePath, "settings.gradle"))?.let {
             val document = FileDocumentManager.getInstance().getDocument(it)
