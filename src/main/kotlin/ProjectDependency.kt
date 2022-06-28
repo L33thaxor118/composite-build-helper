@@ -1,13 +1,12 @@
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.properties.Delegates
 
 class ProjectDependency(dir: File) {
     val path: String
     val name: String
-    var substitute: String
-    var using: String
+    var substitute: String?
+    var using: String?
     var includeBuild: Boolean
     var checkedOutVersion: String
     var isClean: Boolean
@@ -15,13 +14,19 @@ class ProjectDependency(dir: File) {
     val repoController = GitRepoController(dir.path)
 
     val inclusionStatement: String
-        get() = "includeBuild(\"$path\") {dependencySubstitution {substitute module('$substitute') using project('$using')}}"
+        get() {
+            return if (substitute == null || using == null) {
+                "includeBuild '${path}'"
+            } else {
+                "includeBuild(\"$path\") {dependencySubstitution {substitute module('$substitute') using project('$using')}}"
+            }
+        }
 
     init {
         path = dir.path
         name = getProjectName(dir)
-        substitute = Defaults.substitution[name] ?: ""
-        using = Defaults.using[name] ?: ""
+        substitute = Defaults.substitution[name]
+        using = Defaults.using[name]
         includeBuild = false
         checkedOutVersion = getCurrentCheckedOutVersion()
         isClean = isRepoClean()

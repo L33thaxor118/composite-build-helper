@@ -19,7 +19,12 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import javax.swing.*
+//1. remove based on project path, not current include expression
+//2. add simple include expression if substitute & using aren't defined
 
+//3. perform search in background
+//4. persist substitute & using settings for projects
+//5. clean up, test & refactor
 
 class ComposerTool(private val project: Project) {
     private val container = JPanel()

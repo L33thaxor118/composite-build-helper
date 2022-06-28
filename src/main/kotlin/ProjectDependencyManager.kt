@@ -25,7 +25,7 @@ class ProjectDependencyManager(private val project: Project) {
             val existingContentScanner = Scanner(document?.text)
             while(existingContentScanner.hasNextLine()) {
                 val line = existingContentScanner.nextLine()
-                if (line.equals(dependency.inclusionStatement)) {
+                if (line.contains(dependency.path)) {
                     dependencyFound = true
                 }
             }
@@ -71,7 +71,7 @@ class ProjectDependencyManager(private val project: Project) {
         val newContentBuilder = StringBuilder()
         while(existingContentScanner.hasNextLine()) {
             val line = existingContentScanner.nextLine()
-            if (!line.contains(dependency.inclusionStatement)) {
+            if (!line.contains(dependency.path)) {
                 newContentBuilder.appendLine(line)
             }
         }

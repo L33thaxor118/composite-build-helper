@@ -40,8 +40,8 @@ class ProjectTableModel: AbstractTableModel() {
         val project = projects[rowIndex]
         return when (columnIndex) {
             0 -> project.name
-            1 -> project.substitute
-            2 -> project.using
+            1 -> project.substitute ?: ""
+            2 -> project.using ?: ""
             3 -> project.checkedOutVersion
             4 -> if (project.isClean) "clean" else "dirty"
             5 -> project.includeBuild
