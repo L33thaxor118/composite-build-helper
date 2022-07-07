@@ -8,6 +8,7 @@ import util.TerminalOpener
 import javax.swing.BoxLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.JProgressBar
 
 
 class ComposerToolView(
@@ -26,8 +27,10 @@ class ComposerToolView(
     private val rootDirPickerView = RootDirPickerView(project).apply {
         onSearch { path ->
             viewScope.launch {
+                progressBar.isVisible = true
                 val builds = buildRepository.getGradleBuilds(path)
                 buildTableView.setBuilds(builds)
+                progressBar.isVisible = false
             }
         }
     }
@@ -35,6 +38,7 @@ class ComposerToolView(
     private val controlsView = ControlsView().apply {
         onGitRefresh {
             viewScope.launch {
+                progressBar.isVisible = true
                 val builds = buildTableView.getBuilds()
                 builds.forEach { build ->
                     build.repoStatus?.let { _ ->
@@ -42,11 +46,17 @@ class ComposerToolView(
                     }
                 }
                 buildTableView.setBuilds(builds)
+                progressBar.isVisible = false
             }
         }
         onUpdateSettings {
             includedBuildController.updateBuildInclusion(buildTableView.getBuilds().map { it.inclusionSettings })
         }
+    }
+
+    private val progressBar = JProgressBar().apply {
+        isIndeterminate = true
+        isVisible = false
     }
 
     private val buildTableView = BuildTableView().apply {
@@ -68,6 +78,7 @@ class ComposerToolView(
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
         add(rootDirPickerView.component)
         add(controlsView.component)
+        add(progressBar)
         add(buildTableView.component)
     }
 }
