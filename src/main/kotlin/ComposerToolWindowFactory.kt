@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import dao.GitRepoStatusDao
 import dao.GradleBuildDao
 import dao.BuildInclusionSettingsDao
+import repository.GradleBuildRepository
 import util.IncludedBuildController
 import util.TerminalOpener
 import view.ComposerToolView

@@ -1,3 +1,5 @@
+package repository
+
 import com.intellij.openapi.project.Project
 import dao.GitRepoStatusDao
 import dao.GradleBuildDao
