@@ -1,5 +1,7 @@
 package dao
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import model.GitRepoStatus
 import java.io.BufferedReader
 import java.io.File
@@ -8,19 +10,19 @@ import java.io.InputStreamReader
 
 class GitRepoStatusDao {
 
-    fun getRepoStatus(repoPath: String): GitRepoStatus? {
+    suspend fun getRepoStatus(repoPath: String): GitRepoStatus? = withContext(Dispatchers.IO) {
         val directory = File(repoPath)
         val gitFile = File(repoPath, ".git")
         if (!directory.isDirectory || !gitFile.exists()) {
-            return null
+            return@withContext null
         }
         val currentTag = getCurrentTag(directory)
         val isWorkingTreeClean = isWorkingTreeClean(directory)
-        return GitRepoStatus(repoPath, currentTag, isWorkingTreeClean)
+        return@withContext GitRepoStatus(repoPath, currentTag, isWorkingTreeClean)
     }
 
-    private fun getCurrentTag(repoDir: File): String? {
-        return try {
+    private suspend fun getCurrentTag(repoDir: File): String? = withContext(Dispatchers.IO) {
+        return@withContext try {
             val pb = ProcessBuilder()
                 .command("git", "describe", "--tags")
                 .directory(repoDir)
@@ -34,16 +36,16 @@ class GitRepoStatusDao {
         } catch (e: Exception) { null }
     }
 
-    private fun isWorkingTreeClean(repoDir: File): Boolean {
-        return try {
+    private suspend fun isWorkingTreeClean(repoDir: File): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
             val pb = ProcessBuilder()
                 .command("git", "status", "--short")
                 .directory(repoDir)
             val pr = pb.start()
             pr.waitFor()
             val output = BufferedReader(InputStreamReader(pr.inputStream))
-            output.readLine() ?: return true
-            return false
+            output.readLine() ?: return@withContext true
+            return@withContext false
         } catch (e: Exception) { true }
     }
 }

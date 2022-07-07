@@ -1,5 +1,7 @@
 package dao
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import model.GradleBuild
 import java.io.File
 import java.util.*
@@ -11,7 +13,7 @@ import java.util.regex.Pattern
  */
 class GradleBuildDao {
 
-    fun getBuilds(inPath: String): List<GradleBuild> {
+    suspend fun getBuilds(inPath: String): List<GradleBuild> = withContext(Dispatchers.IO) {
         val projectDirs = File(inPath)
             .walk()
             .filter { it.isDirectory }
@@ -19,10 +21,10 @@ class GradleBuildDao {
             .toList()
         val builds = projectDirs.map { GradleBuild(it.path) }
         builds.forEach { it.rootProjectName = getRootProjectName(it) }
-        return builds
+        return@withContext builds
     }
 
-    private fun getRootProjectName(project: GradleBuild): String {
+    private suspend fun getRootProjectName(project: GradleBuild): String = withContext(Dispatchers.IO) {
         var name = ""
         try {
             val scanner = Scanner(File(project.path, "settings.gradle"))
@@ -38,6 +40,6 @@ class GradleBuildDao {
                 }
             }
         } catch(ignored: Exception) { }
-        return name
+        return@withContext name
     }
 }

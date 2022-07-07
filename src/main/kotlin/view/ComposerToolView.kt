@@ -2,8 +2,7 @@ package view
 
 import GradleBuildRepository
 import com.intellij.openapi.project.Project
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import util.IncludedBuildController
 import util.TerminalOpener
 import javax.swing.BoxLayout
@@ -17,6 +16,8 @@ class ComposerToolView(
     private val terminalOpener: TerminalOpener,
     private val includedBuildController: IncludedBuildController
 ) {
+    private val viewScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
     val component: JComponent
         get() {
             return container
@@ -24,7 +25,7 @@ class ComposerToolView(
 
     private val rootDirPickerView = RootDirPickerView(project).apply {
         onSearch { path ->
-            GlobalScope.launch {
+            viewScope.launch {
                 val builds = buildRepository.getGradleBuilds(path)
                 buildTableView.setBuilds(builds)
             }
@@ -33,7 +34,7 @@ class ComposerToolView(
 
     private val controlsView = ControlsView().apply {
         onGitRefresh {
-            GlobalScope.launch {
+            viewScope.launch {
                 val builds = buildTableView.getBuilds()
                 builds.forEach { build ->
                     build.repoStatus?.let { _ ->
