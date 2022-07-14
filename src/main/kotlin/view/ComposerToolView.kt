@@ -14,7 +14,9 @@ class ComposerToolView(
     private val terminalOpener: TerminalOpener,
     private val includedBuildController: IncludedBuildController
 ) {
-    private val viewScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    // I would like to use Dispatchers.Main here but I'm having issues with IntelliJ.
+    // https://youtrack.jetbrains.com/issue/IDEA-285792/Implement-DispatchersMain
+    private val viewScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     val component: JComponent
         get() {
