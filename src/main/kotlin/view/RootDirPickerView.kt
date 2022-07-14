@@ -4,6 +4,7 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -17,6 +18,7 @@ class RootDirPickerView(private val project: Project) {
     val component: JComponent
         get() {
             return JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+                maximumSize = Dimension(10000, 5000)
                 add(searchLabel)
                 add(textFieldWithFileBrowser)
                 add(searchButton)

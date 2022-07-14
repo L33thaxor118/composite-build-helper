@@ -1,6 +1,7 @@
 package view
 
 import com.intellij.ui.components.JBScrollPane
+import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -9,7 +10,8 @@ import javax.swing.JPanel
 class ControlsView {
     val component: JComponent
         get() {
-            return JPanel(FlowLayout(FlowLayout.LEFT)).apply {
+            return JPanel(FlowLayout(FlowLayout.CENTER)).apply {
+                maximumSize = Dimension(10000, 3500)
                 add(refreshButton)
                 add(updateButton)
             }

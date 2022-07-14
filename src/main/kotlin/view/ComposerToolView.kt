@@ -5,10 +5,7 @@ import com.intellij.openapi.project.Project
 import kotlinx.coroutines.*
 import util.IncludedBuildController
 import util.TerminalOpener
-import javax.swing.BoxLayout
-import javax.swing.JComponent
-import javax.swing.JPanel
-import javax.swing.JProgressBar
+import javax.swing.*
 
 
 class ComposerToolView(
