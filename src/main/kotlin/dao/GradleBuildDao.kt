@@ -31,11 +31,14 @@ class GradleBuildDao {
             while (scanner.hasNextLine()) {
                 val line = scanner.nextLine()
                 if(line.contains("rootProject.name")) {
-                    val r = Pattern.compile("\".*\"")
-                    val m = r.matcher(line)
-                    if (m.find()) {
-                        val match = m.group(0)
-                        name = match.substring(1, match.length - 1);
+                    val matcher1 = Pattern.compile("\".*\"").matcher(line)
+                    val matcher2 = Pattern.compile("\'.*\'").matcher(line)
+                    if (matcher1.find()) {
+                        val match = matcher1.group(0)
+                        name = match.substring(1, match.length - 1)
+                    } else if (matcher2.find()) {
+                        val match = matcher2.group(0)
+                        name = match.substring(1, match.length - 1)
                     }
                 }
             }
