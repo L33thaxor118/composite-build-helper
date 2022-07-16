@@ -25,27 +25,31 @@ class ComposerToolView(
 
     private val rootDirPickerView = RootDirPickerView(project).apply {
         onSearch { path ->
+            progressBar.isVisible = true
             viewScope.launch {
-                progressBar.isVisible = true
                 val builds = buildRepository.getGradleBuilds(path)
-                buildTableView.setBuilds(builds)
-                progressBar.isVisible = false
+                SwingUtilities.invokeLater(Runnable {
+                    buildTableView.setBuilds(builds)
+                    progressBar.isVisible = false
+                })
             }
         }
     }
 
     private val controlsView = ControlsView().apply {
         onGitRefresh {
+            progressBar.isVisible = true
             viewScope.launch {
-                progressBar.isVisible = true
                 val builds = buildTableView.getBuilds()
                 builds.forEach { build ->
                     build.repoStatus?.let { _ ->
                         build.repoStatus = buildRepository.getRepoStatusForBuild(build)
                     }
                 }
-                buildTableView.setBuilds(builds)
-                progressBar.isVisible = false
+                SwingUtilities.invokeLater(Runnable {
+                    buildTableView.setBuilds(builds)
+                    progressBar.isVisible = false
+                })
             }
         }
         onUpdateSettings {
